@@ -30,7 +30,7 @@ android {
     defaultConfig {
     ...
         minSdkVersion 16
-        targetSdkVersion 19
+        targetSdkVersion 26
     }
 }
 ```
@@ -41,7 +41,7 @@ In plumble/libraries/Jumble/src/main/AndroidManifest.xml:
 <manifest ...>
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="21"/>
+        android:targetSdkVersion="26"/>
 ...
 </manifest>
 ```
