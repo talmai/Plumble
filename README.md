@@ -1,55 +1,65 @@
-Plumble
+PBC Translate
 =======
 
-Plumble is a robust GPLv3 Mumble client for Android that uses the [Jumble](https://github.com/Morlunk/Jumble) protocol implementation.
+PBC Translate (https://github.com/talmai/Plumble) is forked from the Pumble project
+(https://github.com/acomminos/Plumble). All changes are available at the github.com repository.
 
-[![Build Status](https://www.morlunk.com/jenkins/buildStatus/icon?job=Plumble-Nightly)](https://www.morlunk.com/jenkins/job/Plumble-Nightly/)
-
-<a href="https://play.google.com/store/apps/details?id=com.morlunk.mumbleclient">
-  <img alt="Get it on Google Play" src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png" />
-</a>
-<a href="https://f-droid.org/repository/browse/?fdid=com.morlunk.mumbleclient">
-  <img alt="Get it on F-Droid" src="https://f-droid.org/wiki/images/c/c4/F-Droid-button_available-on.png" height="45" />
-</a>
+Plumble is a robust GPLv3 Mumble client for Android that uses the [Jumble](https://github.com/Morlunk/Jumble)
+protocol implementation.
 
 Building on GNU/Linux
 ---------------------
-
     git submodule update --init --recursive
     ./gradlew assembleDebug
 
-It's that simple!
+Changes required to build
+---------------------
+In plumble/libraries/Jumble/src/main/jni/Application.mk:
 
-Inter-process communication
----------------------------
+```
+APP_ABI := all
+APP_STL := c++_static
+```
 
-Documentation on integrating your app with Plumble's IPC features [here](https://github.com/Morlunk/Plumble/wiki/Inter-process-communication).
+In plumble/libraries/Jumble/build.gradle:
 
-Contributing
-============
+```
+android {
+    compileSdkVersion 21
 
-Coding
-------
+    defaultConfig {
+    ...
+        minSdkVersion 16
+        targetSdkVersion 19
+    }
+}
+```
 
-Standard FOSS project procedure applies; fork and submit a PR!
+In plumble/libraries/Jumble/src/main/AndroidManifest.xml:
 
-Please use Transifex for translations, not pull requests.
+```
+<manifest ...>
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="21"/>
+...
+</manifest>
+```
 
-Testing
--------
+If either of the following errors pop-up:
 
-[Help test the latest Plumble nightly builds here.](https://www.morlunk.com/jenkins/) File issue reports with Nightly version number.
+```
+No toolchains found in the NDK toolchains folder for ABI with prefix mips64el-linux-android
+No toolchains found in the NDK toolchains folder for ABI with prefix mipsel-linux-android
+```
 
-Translation
------------
+It may be due to the fact that the latest NDK removed support for mips abi,
+and earler version of android gradle plugin still check for the existance of mips toolchain. Upgrade your gradle plugin to 3.5
+and create the missing folder structure to fool Android Studio. The easiest way would be to symbolic link:
 
-Contribute translations to Plumble using [Transifex](https://www.transifex.com/projects/p/plumble/)!
-
-Donate
-------
-
-Plumble is a lot of work to develop! All donations are appreciated, via the paid version on Google Play or here.
-
-[Paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ALTS7G56K2CGS)
-
-[Bitcoin](bitcoin:1ySD4UzFDtPLq9agRg9eiFtWmz6DJ7bBf?label=Plumble%20Donations) (1ySD4UzFDtPLq9agRg9eiFtWmz6DJ7bBf)
+```
+# on Mac
+cd  ~/Library/Android/sdk/ndk-bundle/toolchains
+ln -s aarch64-linux-android-4.9 mips64el-linux-android
+ln -s arm-linux-androideabi-4.9 mipsel-linux-android
+```

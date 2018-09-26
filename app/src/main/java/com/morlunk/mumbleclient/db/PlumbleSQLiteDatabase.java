@@ -49,6 +49,15 @@ public class PlumbleSQLiteDatabase extends SQLiteOpenHelper implements PlumbleDa
             + "`" + SERVER_PASSWORD + "` TEXT"
             + ");";
 
+    public static final String INSERT_PBC_PLACE_SERVER_SQL = "INSERT INTO `" + TABLE_SERVER + "` ("
+            + "`" + SERVER_NAME + "`,"
+            + "`" + SERVER_HOST + "`,"
+            + "`" + SERVER_PORT + "`,"
+            + "`" + SERVER_USERNAME + "`,"
+            + "`" + SERVER_PASSWORD + "`) "
+            + "SELECT 'PBC.PLACE', 'beta.pbc.place', 64738, 'guest_' || lower(hex(randomblob(4))), 'pbc' "
+            + "where NOT exists(select 1 from `" + TABLE_SERVER + "` where `" + SERVER_HOST + "` = 'beta.pbc.place');";
+
     public static final String TABLE_FAVOURITES = "favourites";
     public static final String FAVOURITES_ID = "_id";
     public static final String FAVOURITES_CHANNEL = "channel";
@@ -135,6 +144,15 @@ public class PlumbleSQLiteDatabase extends SQLiteOpenHelper implements PlumbleDa
     }
 
     @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+
+        if (!db.isReadOnly()){
+            db.execSQL(INSERT_PBC_PLACE_SERVER_SQL);
+        }
+    }
+
+    @Override
     public void onUpgrade(
             SQLiteDatabase db,
             int oldVersion,
@@ -167,7 +185,6 @@ public class PlumbleSQLiteDatabase extends SQLiteOpenHelper implements PlumbleDa
 
     @Override
     public void open() {
-        // Do nothing. Database will be opened automatically when accessing it.
     }
 
     @Override
